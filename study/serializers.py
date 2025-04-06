@@ -1,29 +1,36 @@
-# study/serializers.py
 from rest_framework import serializers
-from .models import StudentProfile, StudyPlan, StudyTask
+from .models import Subject, Content, Question, Simulation
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
-class StudentProfileSerializer(serializers.ModelSerializer):
+class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StudentProfile
+        model = Subject
         fields = '__all__'
 
-class StudyTaskSerializer(serializers.ModelSerializer):
+class ContentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StudyTask
+        model = Content
         fields = '__all__'
 
-class StudyPlanSerializer(serializers.ModelSerializer):
-    tasks = StudyTaskSerializer(many=True, read_only=True)
-
+class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StudyPlan
+        model = Question
         fields = '__all__'
-        extra_kwargs = {
-            'student': {'required': False},  # Allow student to be optional for creation
-        }
-    def create(self, validated_data):
-        tasks_data = validated_data.pop('tasks', [])
-        study_plan = StudyPlan.objects.create(**validated_data)
-        for task_data in tasks_data:
-            StudyTask.objects.create(plan=study_plan, **task_data)
-        return study_plan
+
+class SimulationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Simulation
+        fields = '__all__'
+from .models import StudyProgress
+
+class StudyProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudyProgress
+        fields = '__all__'
+from .models import Notification
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'
