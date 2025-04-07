@@ -49,6 +49,14 @@ class StudyPlanSerializer(serializers.ModelSerializer):
         model = StudyPlan
         fields = '__all__'
 
+    def validate_end_date(self, value):
+        """
+        Verifica se a data de término é posterior à data de início.
+        """
+        if value <= self.initial_data['start_date']:
+            raise serializers.ValidationError("A data de término deve ser posterior à data de início.")
+        return value
+
 class StudentProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentProfile
