@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -30,8 +33,9 @@ urlpatterns = [
     path('api/study/', include('study.urls')),
     path('api/content/', include('content.urls')),
     path('api/interaction/', include('interaction.urls')),
+    path('api/tutor/', include('tutor.urls')),
     path('register/', UserCreateView.as_view(), name='user-register'),  # Adiciona a rota diretamente
-    path('', home, name='home'),  # Rota para a URL raiz
+    path('', TemplateView.as_view(template_name='index.html')),  # Rota para servir o React
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

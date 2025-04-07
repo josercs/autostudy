@@ -30,6 +30,7 @@ DEBUG = env('DEBUG')
 DATABASES = {
     'default': env.db(),
 }
+OPENAI_API_KEY = env('OPENAI_API_KEY')
 
 ALLOWED_HOSTS = []
 
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'drf_yasg',
     'interaction',
+    'tutor',
 ]
 
 
@@ -82,7 +84,7 @@ ROOT_URLCONF = 'autostudy.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,6 +95,8 @@ TEMPLATES = [
         },
     },
 ]
+
+TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'frontend/build')]
 
 WSGI_APPLICATION = 'autostudy.wsgi.application'
 
@@ -136,7 +140,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -170,7 +176,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'errors.log'),
+            'filename': 'errors.log',  # Arquivo onde os erros serão registrados
         },
     },
     'loggers': {
@@ -178,6 +184,11 @@ LOGGING = {
             'handlers': ['file'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'utils': {  # Logger específico para o arquivo utils.py
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': False,
         },
     },
 }
@@ -197,7 +208,7 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
 
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False # Defina como True se estiver usando HTTPS
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000  # 1 ano
