@@ -1,7 +1,11 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+from content.models import Disciplina, Topico, VideoAula, Quiz
 from users.models import User
 from django.utils.timezone import now
 from django.utils import timezone
+
+User = get_user_model()
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)  # Certifique-se de que o campo 'name' existe
@@ -65,3 +69,22 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'Notification for {self.user.username}: {self.message}'
+
+class ProgressoEstudo(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='progresso_estudo')
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, related_name='progresso_estudo')
+    topico = models.ForeignKey(Topico, on_delete=models.CASCADE, related_name='progresso_estudo', null=True, blank=True)
+    video_aula = models.ForeignKey(VideoAula, on_delete=models.CASCADE, related_name='progresso_estudo', null=True, blank=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='progresso_estudo', null=True, blank=True)
+    percentual_conclusao = models.FloatField(default=0.0)
+    acertos = models.IntegerField(default=0)
+    erros = models.IntegerField(default=0)
+    tempo_estudo = models.DurationField(default="00:00:00")  # Tempo total de estudo
+    ultima_atualizacao = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.disciplina.nome} - {self.percentual_conclusao}%"
+
+    class Meta:
+        unique_together = ('usuario', 'disciplina', 'topico', 'video_aula', 'quiz')
+        ordering = ['-ultima_atualizacao']

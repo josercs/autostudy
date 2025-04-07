@@ -7,6 +7,7 @@ from .models import StudyPlan
 from .models import Notification
 from .models import StudyProgress
 from .models import StudentProfile
+from .models import ProgressoEstudo
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -60,4 +61,9 @@ class StudyPlanSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentProfile
+        fields = '__all__'
+
+class ProgressoEstudoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgressoEstudo
         fields = '__all__'

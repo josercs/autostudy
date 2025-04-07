@@ -2,7 +2,8 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     SubjectViewSet, ContentViewSet, QuestionViewSet, 
     SimulationViewSet, StudyProgressViewSet, StudyHistoryView,
-    PublicSubjectListView, PublicContentBySubjectView, NotificationViewSet
+    PublicSubjectListView, PublicContentBySubjectView, NotificationViewSet,
+    ProgressoEstudoViewSet
 )
 from django.urls import path
 
@@ -13,6 +14,7 @@ router.register(r'questions', QuestionViewSet)
 router.register(r'simulations', SimulationViewSet)
 router.register(r'progress', StudyProgressViewSet, basename='study-progress')
 router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'progresso', ProgressoEstudoViewSet)
 
 urlpatterns = [
     path('public/subjects/', PublicSubjectListView.as_view(), name='public-subjects'),

@@ -1,3 +1,10 @@
 from django.contrib import admin
+from .models import VideoAula, Quiz
 
-# Register your models here.
+@admin.register(VideoAula)
+class VideoAulaAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'autor', 'data_criacao')
+
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'autor', 'data_criacao')

@@ -28,6 +28,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/study/', include('study.urls')),
+    path('api/content/', include('content.urls')),
+    path('api/interaction/', include('interaction.urls')),
     path('register/', UserCreateView.as_view(), name='user-register'),  # Adiciona a rota diretamente
     path('', home, name='home'),  # Rota para a URL raiz
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

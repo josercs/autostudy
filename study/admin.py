@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject, Content, Question, Simulation
+from .models import Subject, Content, Question, Simulation, ProgressoEstudo
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
@@ -17,3 +17,9 @@ class QuestionAdmin(admin.ModelAdmin):
 class SimulationAdmin(admin.ModelAdmin):
     list_display = ('title', 'user', 'created_at')
     filter_horizontal = ('questions',)
+
+@admin.register(ProgressoEstudo)
+class ProgressoEstudoAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'disciplina', 'topico', 'percentual_conclusao', 'ultima_atualizacao')
+    list_filter = ('disciplina', 'topico', 'usuario')
+    search_fields = ('usuario__username', 'disciplina__nome', 'topico__nome')

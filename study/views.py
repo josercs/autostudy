@@ -1,15 +1,15 @@
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, permissions, generics, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import (
     Subject, Content, Question, Simulation,
-    StudyProgress, Notification, StudyPlan, StudyTask, StudentProfile
+    StudyProgress, Notification, StudyPlan, StudyTask, StudentProfile, ProgressoEstudo
 )
 from .serializers import (
     SubjectSerializer, ContentSerializer, QuestionSerializer, SimulationSerializer,
     StudyProgressSerializer, NotificationSerializer, StudyPlanSerializer,
-    StudyTaskSerializer, StudentProfileSerializer
+    StudyTaskSerializer, StudentProfileSerializer, ProgressoEstudoSerializer
 )
 
 class SubjectViewSet(viewsets.ModelViewSet):
@@ -87,3 +87,9 @@ class StudyTaskViewSet(viewsets.ModelViewSet):
     queryset = StudyTask.objects.all()
     serializer_class = StudyTaskSerializer
     permission_classes = [IsAuthenticated]
+
+class ProgressoEstudoViewSet(viewsets.ModelViewSet):
+    queryset = ProgressoEstudo.objects.all()
+    serializer_class = ProgressoEstudoSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['usuario__username', 'disciplina__nome', 'topico__nome']
