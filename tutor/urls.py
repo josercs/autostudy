@@ -1,6 +1,10 @@
-from django.urls import path
-from .views import tutor_chat
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import StudyPlanViewSet
+
+router = DefaultRouter()
+router.register(r'study-plan', StudyPlanViewSet, basename='study-plan')
 
 urlpatterns = [
-    path('chat/', tutor_chat, name='tutor-chat'),
+    path('', include(router.urls)),
 ]

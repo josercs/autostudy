@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import './ChatTutor.css'; // Importa o CSS
 
 const ChatTutor = () => {
@@ -8,7 +8,7 @@ const ChatTutor = () => {
 
   const enviarMensagem = async () => {
     try {
-      const res = await axios.post('/api/tutor/chat/', { mensagem });
+      const res = await axiosInstance.post('tutor/chat/', { mensagem });
       setResposta(res.data.resposta);
     } catch (error) {
       setResposta('Erro ao se comunicar com o tutor.');

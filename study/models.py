@@ -4,6 +4,7 @@ from content.models import Disciplina, Topico, VideoAula, Quiz
 from users.models import User
 from django.utils.timezone import now
 from django.utils import timezone
+from django.conf import settings
 
 User = get_user_model()
 
@@ -42,21 +43,29 @@ class StudentProfile(models.Model):
 
 
 class StudyPlan(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_study_plans')  # Alterado o related_name
-    daily_study_time = models.IntegerField(default=0)  # Adicionado valor padrão
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='study_studyplans'  # Certifique-se de que o related_name é único
+    )
+    description = models.TextField(default="Plano de estudo padrão")  # Adicione um valor padrão
+    created_at = models.DateTimeField(auto_now_add=True)  # Define a data/hora automaticamente
+
+    def __str__(self):
+        return f"Plano de Estudo de {self.user.username}"
 
 class StudyTask(models.Model):
     title = models.CharField(max_length=200, default="Tarefa sem título")  # Valor padrão válido
     due_date = models.DateField(default=now)  # Use timezone.now como valor padrão
 
 class StudyProgress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_progress')
-    content = models.ForeignKey(Content, on_delete=models.CASCADE)
-    progress_percent = models.FloatField(default=0.0)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course_name = models.CharField(max_length=255)
+    progress_percentage = models.FloatField(default=0.0)
     last_accessed = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        unique_together = ('user', 'content')
+    def __str__(self):
+        return f"{self.user.username} - {self.course_name}"
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')

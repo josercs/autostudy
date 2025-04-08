@@ -8,7 +8,11 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from users.views import UserCreateView
-
+from django.urls import path, include, re_path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from study import views as study_views
+from users import views as user_views
+from users.views import register  # Import the register function
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -30,12 +34,26 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
-    path('api/study/', include('study.urls')),
+    path('api/study/', include('study.urls')),  # Inclui as rotas do app study
+    path('api/ai/', include('ai_assistant.urls')),
     path('api/content/', include('content.urls')),
     path('api/interaction/', include('interaction.urls')),
-    path('api/tutor/', include('tutor.urls')),
-    path('register/', UserCreateView.as_view(), name='user-register'),  # Adiciona a rota diretamente
+    path('register/', user_views.register, name='register'),  # Endpoint para registro de usuários
+    path('register/', register, name='register'),  # Endpoint para registro de usuários
     path('', TemplateView.as_view(template_name='index.html')),  # Rota para servir o React
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    # Endpoints para autenticação JWT
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Endpoint para obter o token
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Endpoint para atualizar o token
+
+    path('register/', user_views.register, name='register'),
+    path('api/study/progress/', study_views.study_progress, name='study-progress'),
+
+    # Documentação da API
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

@@ -1,7 +1,10 @@
-from rest_framework import viewsets, permissions, generics, filters
+from rest_framework import viewsets, permissions, generics, filters, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.filters import OrderingFilter
+from rest_framework.decorators import api_view
 from .models import (
     Subject, Content, Question, Simulation,
     StudyProgress, Notification, StudyPlan, StudyTask, StudentProfile, ProgressoEstudo
@@ -11,6 +14,13 @@ from .serializers import (
     StudyProgressSerializer, NotificationSerializer, StudyPlanSerializer,
     StudyTaskSerializer, StudentProfileSerializer, ProgressoEstudoSerializer
 )
+
+from rest_framework.response import Response
+from .models import StudyProgress
+from .serializers import StudyProgressSerializer
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
 
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
@@ -50,10 +60,8 @@ class StudyProgressViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        # Retorna apenas os progressos do usuário autenticado
         return StudyProgress.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
@@ -83,6 +91,10 @@ class StudyPlanViewSet(viewsets.ModelViewSet):
     serializer_class = StudyPlanSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        # Retorna apenas os planos de estudo do usuário autenticado
+        return self.queryset.filter(user=self.request.user)
+
 class StudyTaskViewSet(viewsets.ModelViewSet):
     queryset = StudyTask.objects.all()
     serializer_class = StudyTaskSerializer
@@ -93,3 +105,12 @@ class ProgressoEstudoViewSet(viewsets.ModelViewSet):
     serializer_class = ProgressoEstudoSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['usuario__username', 'disciplina__nome', 'topico__nome']
+
+@api_view(['GET'])
+def study_progress(request):
+    try:
+        progress = StudyProgress.objects.filter(user=request.user)
+        serializer = StudyProgressSerializer(progress, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)

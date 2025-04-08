@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_celery_beat',
     'drf_yasg',
+    'rest_framework_simplejwt',
     
     # Local apps
     'users',
@@ -51,6 +52,9 @@ INSTALLED_APPS = [
     'content',
     'interaction',
     'tutor',
+
+    # Novo app para o chatbot/IA
+    'ai_assistant',
 ]
 
 MIDDLEWARE = [
@@ -108,12 +112,15 @@ USE_TZ = True
 
 # REST Framework
 REST_FRAMEWORK = {
+    
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
+    'DEFAULT_PERMISSION_CLASSES': [
+         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+   'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
 }
 
 # CORS
