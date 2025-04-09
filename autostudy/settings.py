@@ -1,11 +1,10 @@
 """
 Django settings for autostudy project.
 """
-
+from datetime import timedelta
 import environ
 import os
 from pathlib import Path
-
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +28,13 @@ DATABASES = {
     'default': env.db(),
 }
 
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+}
+
 # Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,7 +51,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'drf_yasg',
     'rest_framework_simplejwt',
-    
+    'django_ratelimit',  # Nome correto (com underscore)
     # Local apps
     'users',
     'study',
@@ -68,6 +74,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'autostudy.middleware.ExceptionMiddleware',
     'django_ratelimit.middleware.RatelimitMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'autostudy.urls'
@@ -112,15 +120,13 @@ USE_TZ = True
 
 # REST Framework
 REST_FRAMEWORK = {
-    
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',  # Permissão correta
     ],
-   'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 
 # CORS
@@ -192,3 +198,7 @@ LOGGING = {
         },
     },
 }
+# Configurações de Rate Limit
+RATELIMIT_ENABLE = True  # Desative em desenvolvimento se necessário
+RATELIMIT_VIEW = 'autostudy.views.rate_limit_exceeded'
+

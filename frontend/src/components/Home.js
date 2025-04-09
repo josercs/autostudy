@@ -9,7 +9,10 @@ const Home = () => {
       <p>Explore como podemos ajudar você a alcançar seus objetivos de aprendizado.</p>
       <div className="home-links">
         <Link to="/login">Login</Link>
-        <Link to="/register">Cadastro</Link>
+        <Link to="/register">Cadastro</Link>       
+        <Link to="/about">Sobre Nós</Link>
+        <Link to="/contact">Contato</Link>
+
       </div>
     </div>
   );

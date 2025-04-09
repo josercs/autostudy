@@ -60,7 +60,7 @@ class StudyTask(models.Model):
 
 class StudyProgress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    course_name = models.CharField(max_length=255)
+    course_name = models.CharField(max_length=255)  # Certifique-se de que este campo está definido
     progress_percentage = models.FloatField(default=0.0)
     last_accessed = models.DateTimeField(auto_now=True)
 

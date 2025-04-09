@@ -1,11 +1,16 @@
 import axios from 'axios';
+import config from '../config';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/',
+  baseURL: config.API_BASE_URL,
+  timeout: 5000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access'); // Obtém o token do localStorage
+  const token = localStorage.getItem('access');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

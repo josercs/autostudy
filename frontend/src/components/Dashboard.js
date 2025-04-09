@@ -8,14 +8,25 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState([]);  // Se for usado
   const [studyPlan, setStudyPlan] = useState([]); // Se for usado
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await axiosInstance.get('/study/progress/');
-      setProgress(response.data.progress || []);
-      setStudyPlan(response.data.study_plan || []);
-    } catch (error) {
-      setError(error.message);
+      if (response.status === 200) {
+        setProgress(response.data.progress || []);
+        setStudyPlan(response.data.study_plan || 'O plano de estudos será gerado com base no seu progresso.');
+      } else {
+        throw new Error(`Erro inesperado: ${response.status}`);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar os dados:', err);
+      const errorMessage = err.response?.data?.detail || 'Erro ao carregar os dados. Tente novamente mais tarde.';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -23,6 +34,14 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  if (error) {
+    return (
+      <div>
+        <p>Erro: {error}</p>
+        <button onClick={fetchData}>Tentar novamente</button>
+      </div>
+    );
+  }
 
   return (
     <div>

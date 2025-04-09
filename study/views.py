@@ -114,3 +114,14 @@ def study_progress(request):
         return Response(serializer.data)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+class StudyProgressView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Exemplo de dados fictícios
+        progress = [
+            {"id": 1, "course_name": "Matemática", "progress_percentage": 75},
+            {"id": 2, "course_name": "História", "progress_percentage": 50},
+        ]
+        return Response({"progress": progress})
