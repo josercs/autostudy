@@ -1,0 +1,9 @@
+// Bootstrap + suas customizações
+@import "bootstrap/scss/bootstrap";
+
+// Exemplo de customização de variável
+$primary: #0d6efd; // Azul padrão
+$body-bg: #f8f9fa;
+
+// Seus estilos
+@import "./custom"; // Você pode criar um custom.scss com estilos do projeto
