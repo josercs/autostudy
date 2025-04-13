@@ -7,11 +7,13 @@ from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from users.views import UserCreateView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from .views import CustomTokenObtainPairView
+
+# Importações de views
+from users.views import register, UserCreateView
 from study import views as study_views
-from users import views as user_views
-from users.views import register  # Import the register function
+from tutor.views import tutor_chat
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -26,36 +28,40 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-
 def home(request):
     return HttpResponse("Bem-vindo ao AutoStudy!")
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
+    
+    # Autenticação
+    path('api/auth/register/', register, name='auth-register'),
+    path('api/auth/login/', CustomTokenObtainPairView.as_view(), name='auth-login'),
+    path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    
+    # Apps
     path('api/users/', include('users.urls')),
-    path('api/study/', include('study.urls')),  # Inclui as rotas do app study
+    path('api/study/', include('study.urls')),
     path('api/ai/', include('ai_assistant.urls')),
     path('api/content/', include('content.urls')),
     path('api/interaction/', include('interaction.urls')),
-    path('register/', user_views.register, name='register'),  # Endpoint para registro de usuários
-    path('register/', register, name='register'),  # Endpoint para registro de usuários
-    path('', TemplateView.as_view(template_name='index.html')),  # Rota para servir o React
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-
-    # Endpoints para autenticação JWT
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Endpoint para obter o token
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Endpoint para atualizar o token
-
-    path('register/', user_views.register, name='register'),
+    
+    # Endpoints específicos
     path('api/study/progress/', study_views.study_progress, name='study-progress'),
-
-    # Documentação da API
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-
-    path('study/', include('study.urls')),  # Inclui as rotas do app "study"
-    path('api/', include('users.urls')),  # Inclui as rotas do app "users"
+    path('api/tutor/chat/', tutor_chat, name='tutor-chat'),
+    
+    # Documentação
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', 
+            schema_view.without_ui(cache_timeout=0), 
+            name='schema-json'),
+    path('swagger/', 
+         schema_view.with_ui('swagger', cache_timeout=0), 
+         name='schema-swagger-ui'),
+    path('redoc/', 
+         schema_view.with_ui('redoc', cache_timeout=0), 
+         name='schema-redoc'),
+    
+    # Frontend React (deve ser a última rota)
+    path('', TemplateView.as_view(template_name='index.html')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-

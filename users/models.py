@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     is_student = models.BooleanField(default=False)  # Adicione o campo is_student
+    curso = models.CharField(max_length=100, blank=True, null=True)
+    metas = models.TextField(blank=True, null=True)
+    desempenho = models.JSONField(default=dict)  # Exemplo: {"matematica": 70, "portugues": 85}
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')

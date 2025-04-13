@@ -1,13 +1,11 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from .models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email')
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'username', 'email', 'curso', 'metas', 'desempenho']
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -29,3 +27,16 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Adiciona dados adicionais do usuário à resposta
+        data['user_id'] = self.user.id
+        data['username'] = self.user.username
+        data['curso'] = self.user.curso  # Se existir esse campo no modelo
+        data['metas'] = self.user.metas if hasattr(self.user, 'metas') else []
+        data['desempenho'] = self.user.desempenho if hasattr(self.user, 'desempenho') else {}
+
+        return data

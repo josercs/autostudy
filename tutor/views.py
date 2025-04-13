@@ -1,29 +1,40 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 from .utils import gerar_resposta_ia
-from .models import StudyPlan
-from .serializers import StudyPlanSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def tutor_chat(request):
     try:
-        mensagem = request.data.get('mensagem', '')
+        logger.info(f"Request data: {request.data}")
+        mensagem = request.data.get('mensagem', '').strip()
+
         if not mensagem:
-            return Response({"error": "O campo 'mensagem' é obrigatório."}, status=400)
+            return Response(
+                {"error": "Mensagem não pode estar vazia"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         resposta = gerar_resposta_ia(mensagem)
-        return Response({"resposta": resposta})
+        logger.info(f"Resposta gerada: {resposta[:200]}...")  # Log parcial
+
+        return Response(
+            {"resposta": resposta},
+            status=status.HTTP_200_OK,
+            content_type='application/json; charset=utf-8'
+        )
+
     except Exception as e:
-        return Response({"error": str(e)}, status=500)
-
-class StudyPlanViewSet(viewsets.ModelViewSet):
-    queryset = StudyPlan.objects.all()
-    serializer_class = StudyPlanSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        # Retorna apenas os planos de estudo do usuário autenticado
-        return self.queryset.filter(user=self.request.user)
+        logger.error(f"ERRO CRÍTICO: {str(e)}", exc_info=True)
+        return Response(
+            {
+                "error": "Erro interno do servidor",
+                "detalhes": str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

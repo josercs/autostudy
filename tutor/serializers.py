@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import StudyPlan  # Certifique-se de que o modelo está sendo importado corretamente
+from .models import Mensagem  # Altere para o modelo correto, se necessário
 
 class StudyPlanSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StudyPlan
+    class Meta:   
+        model = Mensagem
         fields = '__all__'

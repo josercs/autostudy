@@ -20,9 +20,11 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
-# Configuração do Gemini (substituindo OpenAI)
-GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
-
+# Configurações do Gemini
+GOOGLE_API_KEY = env('GOOGLE_API_KEY')
+GEMINI_MODEL_NAME = 'gemini-1.5-pro-latest'  # Especificando o modelo
+# Configurações de timeout
+GEMINI_REQUEST_TIMEOUT = 30  # segundos
 # Database
 DATABASES = {
     'default': env.db(),
@@ -32,7 +34,6 @@ DATABASES = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': True,
 }
 
 # Apps
@@ -121,19 +122,19 @@ USE_TZ = True
 # REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Use JWT para autenticação
+        'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Permissão correta
+        'rest_framework.permissions.IsAuthenticated',  # Permissão padrão
     ],
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True if DEBUG else False
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:5173",  # Seu frontend Vite
+    "http://127.0.0.1:5173",
 ]
 CORS_ALLOW_CREDENTIALS = True
 

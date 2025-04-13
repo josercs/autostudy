@@ -1,0 +1,247 @@
+/* Sidebar.css - Versão Atualizada */
+
+.sidebar {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  color: #ffffff;
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  transition: all 0.3s ease;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 25px 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+  background: linear-gradient(135deg, #00dbde 0%, #fc00ff 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.sidebar-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #00dbde, #fc00ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+
+.perfil-usuario {
+  padding: 25px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(0, 219, 222, 0.3);
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+  border-color: rgba(252, 0, 255, 0.5);
+}
+
+.perfil-usuario h3 {
+  margin: 10px 0 5px;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.nivel-usuario {
+  margin-top: 15px;
+}
+
+.nivel-tag {
+  display: inline-block;
+  background: rgba(0, 219, 222, 0.2);
+  color: #00dbde;
+  padding: 3px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.progresso-nivel {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.barra-progresso {
+  height: 100%;
+  background: linear-gradient(90deg, #00dbde, #fc00ff);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.menu-navegacao {
+  flex: 1;
+  padding: 15px 0;
+  overflow-y: auto;
+}
+
+.menu-navegacao ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-navegacao li {
+  padding: 0;
+  margin: 5px 15px;
+}
+
+.menu-navegacao a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.menu-navegacao a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(5px);
+}
+
+.menu-navegacao a.active {
+  background: linear-gradient(90deg, rgba(0, 219, 222, 0.2) 0%, rgba(252, 0, 255, 0.2) 100%);
+  color: white;
+  font-weight: 600;
+  border-left: 3px solid #00dbde;
+}
+
+.sidebar-footer {
+  padding: 15px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.botao-sair {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.botao-sair:hover {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff6b6b;
+}
+
+.icone-sair {
+  margin-right: 10px;
+  font-size: 1.1rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .sidebar {
+      width: 80px;
+  }
+  
+  .sidebar-header, .perfil-usuario, .sidebar-footer {
+      padding: 15px 10px;
+  }
+  
+  .sidebar-title, .perfil-usuario h3, .perfil-usuario p, 
+  .nivel-usuario, .botao-sair span, .menu-navegacao a span {
+      display: none;
+  }
+  
+  .sidebar-logo, .avatar {
+      margin-right: 0;
+      width: 40px;
+      height: 40px;
+  }
+  
+  .menu-navegacao a {
+      justify-content: center;
+      padding: 15px 0;
+  }
+  
+  .icone-sair {
+      margin-right: 0;
+      font-size: 1.3rem;
+  }
+  
+  .botao-sair {
+      justify-content: center;
+  }
+}
+.sidebar-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-subtitle {
+  font-size: 0.8rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+}
+.menu-item-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.texto-sair {
+  transition: opacity 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .texto-sair {
+    opacity: 0;
+    width: 0;
+  }
+  
+  .sidebar-logo {
+    font-size: 1.2rem;
+  }
+  
+  .sidebar-title {
+    font-size: 1.1rem;
+  }
+}
