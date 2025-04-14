@@ -1,0 +1,21 @@
+// src/styles/_bootstrap-patch.scss
+@use "sass:math";
+@use "sass:map";
+
+// Defina o mixin ausente
+@mixin _assert-ascending($map, $map-name) {
+  $prev-key: null;
+  $prev-num: null;
+  
+  @each $key, $num in $map {
+    @if $prev-num == null or unit($num) == "%" or unit($prev-num) == "%" {
+      // Não faça nada
+    } @else if not comparable($prev-num, $num) {
+      @warn "Valores não comparáveis: #{$prev-num} e #{$num}";
+    } @else if $prev-num >= $num {
+      @warn "Valor inválido para #{$map-name}: #{$key} deve ser maior que #{$prev-key}";
+    }
+    $prev-key: $key;
+    $prev-num: $num;
+  }
+}

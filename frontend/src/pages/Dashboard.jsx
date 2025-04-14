@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance';
+import React from 'react';
+import Card from '../components/Card';
+import Button from '../components/Button';
 import { 
   FaChartLine, 
   FaBook, 

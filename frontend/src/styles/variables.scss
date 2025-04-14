@@ -1,0 +1,18 @@
+// custom-variables.scss
+$theme-colors: (
+  "primary": #0074d9,
+  "secondary": #6c757d,
+  "success": #28a745,
+  "info": #17a2b8,
+  "warning": #ffc107,
+  "danger": #dc3545,
+  "light": #f8f9fa,
+  "dark": #343a40
+);
+
+// main.scss
+@import "bootstrap/scss/functions";
+@import "custom-variables"; // ANTES das variáveis padrão
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/maps";
+// ... resto

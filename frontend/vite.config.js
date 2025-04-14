@@ -7,23 +7,22 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@auth': path.resolve(__dirname, './src/auth'),
+      // ... seus outros aliases
     }
   },
   css: {
-    devSourcemap: true,
-    modules: {
-      localsConvention: 'camelCase'
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
+          @use "sass:math";
+          @use "sass:map";
+        `,
+        quietDeps: true
+      }
     }
   },
   server: {
     port: 5173,
-    open: true,
-    hmr: {
-      overlay: false
-    }
+    open: true
   }
 });
