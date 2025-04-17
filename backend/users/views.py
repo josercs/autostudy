@@ -9,13 +9,29 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from .serializers import CustomTokenObtainPairSerializer, OnboardingSerializer
 
 User = get_user_model()
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class OnboardingView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        user = request.user
+        serializer = OnboardingSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)    
 
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Permite acesso público ao endpoint
@@ -62,6 +78,16 @@ def chat_tutor(request):
     
     except User.DoesNotExist:
         return Response({'erro': 'Usuário não encontrado'}, status=404)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def completar_onboarding(request):
+    user = request.user
+    data = request.data
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+    user.estilo_aprendizado = data.get('estilo_aprendizado')
+    user.horas_estudo = data.get('horas_estudo')
+    user.trilha = data.get('trilha', 'frontend')
+    user.onboarding_completo = True  # <- ESSENCIAL
+    user.save()
+
+    return Response({'message': 'Onboarding concluído com sucesso'})

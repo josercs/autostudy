@@ -7,6 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'curso', 'metas', 'desempenho']
 
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     
@@ -20,7 +21,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        # Cria o usuário com a senha criptografada
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -28,15 +28,29 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
+        user = self.user
 
-        # Adiciona dados adicionais do usuário à resposta
-        data['user_id'] = self.user.id
-        data['username'] = self.user.username
-        data['curso'] = self.user.curso  # Se existir esse campo no modelo
-        data['metas'] = self.user.metas if hasattr(self.user, 'metas') else []
-        data['desempenho'] = self.user.desempenho if hasattr(self.user, 'desempenho') else {}
+        # Renomeia os tokens para manter o padrão do frontend
+        data['token'] = data.pop('access')
+        data['refreshToken'] = data.pop('refresh')
+
+        # Adiciona os dados do usuário no nível raiz do JSON
+        data['user_id'] = user.id
+        data['nome'] = user.nome
+        data['email'] = user.email
+        data['avatar'] = user.avatar.url if user.avatar else ''
+        data['onboarding_completo'] = user.onboarding_completo
+        data['xp'] = user.xp
+        data['nivel'] = user.nivel
 
         return data
+
+
+class OnboardingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['estilo_aprendizado', 'horas_estudo', 'trilha', 'onboarding_completo']

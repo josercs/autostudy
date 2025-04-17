@@ -2,11 +2,23 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    is_student = models.BooleanField(default=False)  # Adicione o campo is_student
+    is_onboarding_completed = models.BooleanField(default=False)
+    is_student = models.BooleanField(default=False)
     curso = models.CharField(max_length=100, blank=True, null=True)
     metas = models.TextField(blank=True, null=True)
-    desempenho = models.JSONField(default=dict)  # Exemplo: {"matematica": 70, "portugues": 85}
+    desempenho = models.JSONField(default=dict)
+    nome = models.CharField(max_length=100, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    onboarding_completo = models.BooleanField(default=False)
+    xp = models.IntegerField(default=0)
+    nivel = models.IntegerField(default=1)
 
+    
+    
+    estilo_aprendizado = models.CharField(max_length=50, blank=True, null=True)
+    horas_estudo = models.IntegerField(default=5)
+    trilha = models.CharField(max_length=50, blank=True, null=True)
+    # Campos para o plano de estudos
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     birth_date = models.DateField(null=True, blank=True)

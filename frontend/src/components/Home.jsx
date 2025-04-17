@@ -32,12 +32,13 @@ const Home = () => {
           </div>
         </Link>
         
-        <Link to="/contact" className="home-link">
+        <Link to="/chat" className="home-link">
           <div className="link-card">
             <span>Contato</span>
             <p>Fale conosco</p>
           </div>
         </Link>
+        
       </nav>
     </div>
   );

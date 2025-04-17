@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'interaction',
     'tutor',
     'ai_assistant',
+    "onboarding",
 ]
 
 # Middleware

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
+
 
 import { 
   fetchProgresso, 
@@ -9,6 +10,7 @@ import {
   fetchRecomendacoes 
 } from '../services/apiService';
 import './painel.css';
+
 
 import { 
   SidebarAcademica,

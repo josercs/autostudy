@@ -17,11 +17,28 @@ def register(request):
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(["POST"])
+def salvar_onboarding(request):
+    estilo = request.data.get("estilo_aprendizado")
+    usuario_id = request.data.get("usuario_id", "anon")
+    # Aqui você pode salvar no banco ou logar
+    print(f"Estilo: {estilo} | Usuário: {usuario_id}")
+    return Response({"status": "sucesso"})
+
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
-        data['user_id'] = self.user.id  # Inclui o ID do usuário no retorno
-        data['username'] = self.user.username  # Opcional: Inclui o username
+
+        # Adiciona dados extras do usuário
+        data['user_id'] = self.user.id
+        data['nome'] = self.user.first_name or self.user.username
+        data['avatar'] = getattr(self.user, 'avatar', '')
+        data['nivel'] = getattr(self.user, 'nivel', 1)
+        data['xp'] = getattr(self.user, 'xp', 0)
+        data['onboarding_completo'] = getattr(self.user, 'onboarding_completo', False)
+
         return data
 
 class CustomTokenObtainPairView(TokenObtainPairView):

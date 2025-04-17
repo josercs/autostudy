@@ -1,104 +1,79 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import config from "../utils/config";
-import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa';
-import './Login.css';
-import { Link } from 'react-router-dom';
-import { useAuth } from "../AuthContext"; // <-- ADICIONADO
+// Login.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const { login: loginContext } = useAuth(); // <-- ADICIONADO
+
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [error, setError] = useState(null);
+  const [loadingLogin, setLoadingLogin] = useState(false);
 
   const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const response = await axios.post(
-        `${config.API_BASE_URL}${config.ENDPOINTS.LOGIN}`,
-        credentials
-      );
+    setLoadingLogin(true);
+    setError(null);
 
-      if (response.status === 200) {
-        const { access, refresh, user_id, nome, avatar, nivel, xp } = response.data;
-      
-        // Salva no localStorage
-        localStorage.setItem('access', access);
-        localStorage.setItem('refresh', refresh);
-        localStorage.setItem('user_id', user_id);
-        if (nome) localStorage.setItem('nome', nome);
-        if (avatar) localStorage.setItem('avatar', avatar);
-        if (nivel) localStorage.setItem('nivel', nivel);
-        if (xp) localStorage.setItem('xp', xp);
-      
-        // Salva no contexto
-        loginContext({
-          token: access,
-          user_id,
-          nome: nome || credentials.username, // fallback
-          avatar: avatar || '',              // default vazio
-          nivel: nivel || 1,                 // padrão inicial
-          xp: xp || 0                        // padrão inicial
-        });
-      
-        navigate('/painel');
-      }
-    } catch (error) {
-      setError(error.response?.data?.detail || 'Erro ao fazer login');
+    try {
+      await login(form);
+      navigate("/painel"); // redireciona para o painel após login
+    } catch (err) {
+      setError("Usuário ou senha inválidos.");
     } finally {
-      setIsLoading(false);
+      setLoadingLogin(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">
-          <FaSignInAlt className="icon" /> Login
-        </h2>
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="input-group">
-            <FaUser className="input-icon" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 to-indigo-600 p-4">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Login</h2>
+        {error && <div className="text-red-600 text-sm mb-4">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              Usuário
+            </label>
             <input
               type="text"
               name="username"
-              placeholder="Nome de usuário"
-              value={credentials.username}
+              value={form.username}
               onChange={handleChange}
               required
-              minLength={3}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-          <div className="input-group">
-            <FaLock className="input-icon" />
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Senha
+            </label>
             <input
               type="password"
               name="password"
-              placeholder="Senha"
-              value={credentials.password}
+              value={form.password}
               onChange={handleChange}
               required
-              minLength={6}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-          {error && <div className="error-message">{error}</div>}
-          <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? 'Carregando...' : 'Entrar'}
+          <button
+            type="submit"
+            disabled={loadingLogin}
+            className={`w-full py-2 px-4 rounded-lg font-semibold text-white ${
+              loadingLogin ? "bg-indigo-300 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
+            }`}
+          >
+            {loadingLogin ? "Entrando..." : "Entrar"}
           </button>
         </form>
-        <div className="login-footer">
-          <p>Não tem uma conta? <Link to="/register">Cadastre-se</Link></p>
-          <p><Link to="/forgot-password">Esqueceu sua senha?</Link></p>
-        </div>
       </div>
     </div>
   );

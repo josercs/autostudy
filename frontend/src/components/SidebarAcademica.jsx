@@ -17,15 +17,17 @@ const SidebarAcademica = ({ usuario, onLogout, onNavigate }) => {
   const nivel = usuario?.nivel || 1;
   const progresso = usuario?.progresso ?? 65; // Usando ?? para considerar apenas null/undefined
 
+  const nomeUsuario = nome.split(' ')[0]; // Exibe apenas o primeiro nome
+
   return (
     <div className="sidebar">
       {/* Cabeçalho com logo e nome resumido */}
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          {nome.charAt(0).toUpperCase()}
+          {nomeUsuario.charAt(0).toUpperCase()}
         </div>
         <h1 className="sidebar-title">
-          {nome.split(' ')[0]}
+          {nomeUsuario}
         </h1>
       </div>
 
@@ -50,7 +52,6 @@ const SidebarAcademica = ({ usuario, onLogout, onNavigate }) => {
           </div>
         </div>
       </div>
-
 
       {/* Menu de navegação */}
       <nav className="menu-navegacao">
